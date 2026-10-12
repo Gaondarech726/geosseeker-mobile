@@ -25,6 +25,15 @@ jobs:
 
     - name: Build with Buildozer
       run: |
+        # Принудительно принимаем лицензии SDK перед сборкой, чтобы установился aidl
+        yes | buildozer -v android debug || true
+        
+        # Если sdkmanager скачался, подтверждаем лицензии еще раз для верности
+        if [ -d "$HOME/.buildozer/android/platform/android-sdk/tools/bin" ]; then
+          yes | $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager --licenses || true
+        fi
+        
+        # Финальный запуск сборки APK
         buildozer -v android debug
 
     - name: Upload APK artifact
